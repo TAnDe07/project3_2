@@ -1,5 +1,6 @@
-#include"mapImplementation.h"
-#include "graph.h"
+#include "map.h"
+#include "adjmx.h"
+#include "unordermap.h"
 #include "fstream"
 
 int main() {
@@ -20,12 +21,13 @@ int main() {
     string fileName = "data.tsv";
 
     ifstream inFile(fileName);
-    map m;
-    AdjacencyMatrix graph;
+    
+    unorderMap um;
+    AdjacencyMatrix adj;
 
     if (inFile.is_open()) {
         string wholeLine;
-       
+
         getline(inFile, wholeLine);
         //map
         if (mapOrGraph == 1) {
@@ -33,7 +35,7 @@ int main() {
                 string title;
                 string year;
                 string temp;
-                string genre2;
+                string genre;
                 getline(inFile, temp, '\t');
                 getline(inFile, temp, '\t');
                 getline(inFile, title, '\t');
@@ -42,40 +44,26 @@ int main() {
                 getline(inFile, year, '\t');
                 getline(inFile, temp, '\t');
                 getline(inFile, temp, '\t');
-                getline(inFile, genre2);
-                vector<string> genre;
+                getline(inFile, genre);
+               
 
-                for (int j = 0; j < genre2.size(); ++j) {
-                    if (genre2.at(j) == ',') {
-                        genre.push_back(genre2.substr(2, j - 2));
-                        genre2.erase(0, j + 1);
-                        j = 0;
-                    }
-                    else if (j == genre2.size() - 1) {
-                        genre.push_back(genre2);
-                    }
-                }
                 movie c(title, genre, year);
-                m.mapInsert(title, c, false);
+                um.insert(title, c);
+
+                //m.mapInsert(title, c, false);
             }
         }
         //graph
         else {
             for (int i = 0; i < 100; ++i) {
                 for (int j = 0; j < 1000; ++j) {
-                    /*string wholeLine;
-                    string title;
-                    vector<string> genre;
-                    string year;
-                    string genre2;
-                    getline(inFile, wholeLine);
-                    */
+                   
                     string title;
                     string year;
                     string temp;
-                    string genre2;
-                    vector<string> genre;
-                   
+                    string genre;
+                    
+
                     getline(inFile, temp, '\t');
                     getline(inFile, temp, '\t');
                     getline(inFile, title, '\t');
@@ -84,20 +72,11 @@ int main() {
                     getline(inFile, year, '\t');
                     getline(inFile, temp, '\t');
                     getline(inFile, temp, '\t');
-                    getline(inFile, genre2);
+                    getline(inFile, genre);
+
                     
-                    for (int j = 0; j < genre2.size(); ++j) {
-                        if (genre2.at(j) == ',') {
-                            genre.push_back(genre2.substr(2, j - 2));
-                            genre2.erase(0, j + 1);
-                            j = 0;
-                        }
-                        else if (j == genre2.size() - 1) {
-                            genre.push_back(genre2);
-                        }
-                    }
                     movie c(title, genre, year);
-                    graph.InsertEdge(i, j, c);
+                    adj.InsertEdge(i, j, c);
 
                 }
 
@@ -116,45 +95,65 @@ int main() {
         cin >> rec;
         cout << endl;
 
+        if (rec == 3) {
+            cout << "Thank you for using our recommendation system! Bye!" << endl;
+            rec = 3;
+            break;
+        }
+        
+        
+        
         if (mapOrGraph == 1) {
             if (rec == 1) {
+                
                 cout << "Enter the movie name: " << endl;
                 string title;
                 cin >> title;
-                m.mapSearch(rec, title);
+                um.SearchRelatedGenre(title);
             }
             else if (rec == 2) {
-                cout << "Enter the movie name: " << endl;
+                
+                cout << "Enter the movie name : " << endl;
                 string title;
                 cin >> title;
-                m.mapSearch(rec, title);
+                um.SearchRelatedYear(title);
             }
 
-            if (rec == 3) {
-                cout << "Thank you for using our recommendation system! Bye!" << endl;
-                rec = 3;
-            }
+           
         }
         else {
             if (rec == 1) {
                 cout << "Enter the movie name: " << endl;
                 string title;
                 cin >> title;
-                graph.SearchRelated(rec, title);
+                for (int i = 0; i < 100; ++i) {
+                    for (int j = 0; j < 1000; ++j) {
+                        if (adj.graph[i][j].name == title) {
+                            adj.SearchRelatedGenre(adj.graph[i][j]);
+                        }
+                    }
+
+                }
+                
+
             }
             else if (rec == 2) {
                 cout << "Enter the movie name: " << endl;
                 string title;
                 cin >> title;
-                graph.SearchRelated(rec, title);
-            }
-            if (rec == 3) {
-                cout << "Thank you for using our recommendation system! Bye!" << endl;
-                rec = 3;
-            }
-        
-        }
+                for (int i = 0; i < 100; ++i) {
+                    for (int j = 0; j < 1000; ++j) {
+                        if (adj.graph[i][j].name == title) {
+                            adj.SearchRelatedYear(adj.graph[i][j]);
+                        }
+                    }
 
-        
-    }
+                }
+                
+            }
+            
+
+        }
+}
+    
 }

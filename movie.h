@@ -1,4 +1,5 @@
 #pragma once
+
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -8,10 +9,10 @@ using namespace std;
 
 struct movie {
     string name;
-    vector<string> genre;
+    string genre;
     string year;
     // movie() : name(" "), genre(" "), year(" ") {}
-    movie(string name, vector<string> genre, string year) {
+    movie(string name, string genre, string year) {
         this->name = name;
         this->genre = genre;
         this->year = year;
